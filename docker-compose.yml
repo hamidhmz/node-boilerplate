@@ -1,0 +1,46 @@
+version: '3.2'
+
+services:
+  app-prisma-graphql:
+    container_name: app-prisma-graphql
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    volumes:
+      - .:/app
+    
+    env_file:
+      - .env
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres-prisma-graphql
+  postgres-prisma-graphql:
+    container_name: postgres-prisma-graphql
+    image: postgres:13.1
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data-prisma-graphql:/var/lib/postgresql/data
+
+  pgadmin-prisma-graphql:
+    container_name: pgadmin-prisma-graphql
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "h.mosaferkocholo@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    volumes:
+       - pgadmin-prisma-graphql:/root/.pgadmin
+    depends_on:
+      - postgres-prisma-graphql
+    ports:
+      - "5050:80"
+volumes:
+  postgres-data-prisma-graphql:
+  pgadmin-prisma-graphql:
