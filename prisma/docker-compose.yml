@@ -13,7 +13,7 @@ services:
         databases:
           default:
             connector: postgres
-            host: host.docker.internal
+            host: postgres-prisma-graphql
             database: prisma-graphql
             schema: public
             user: postgres
@@ -22,3 +22,8 @@ services:
             rawAccess: true
             port: '5432'
             migrations: true
+
+networks:
+  default:
+    external:
+      name: prisma-graphql_prisma-graphql

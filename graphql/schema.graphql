@@ -1,0 +1,109 @@
+type Query {
+  "just an example for run app"
+  users(query: String): [User]!
+  posts(query: String): [Post]!
+  comments(query: String): [Comment]!
+}
+
+type Mutation {
+  "example for mutation create data"
+  createUser(data: createUserInput): User!
+  "example for mutation create data"
+  createPost(data: createPostInput): Post!
+  "example for mutation create data"
+  createComment(data: createCommentInput): Comment!
+
+  "example for mutation delete data"
+  deleteUser(id: ID!): User!
+  "example for mutation delete data"
+  deletePost(id: ID!): Post!
+  "example for mutation delete data"
+  deleteComment(id: ID!): Comment!
+
+  "example for mutation update data"
+  updateUser(id: ID!, data: updateUserInput): User!
+  "example for mutation update data"
+  updatePost(id: ID!, data: updatePostInput): Post!
+  "example for mutation update data"
+  updateComment(id: ID!, data: updateCommentInput): Comment!
+}
+
+type Subscription {
+  comment(postId: ID!): CommentSubscriptionPayload!
+  post: PostSubscriptionPayload!
+}
+type Post {
+  id: ID!
+  title: String!
+  body: String!
+  published: Boolean!
+  author: User!
+  comments: [Comment]!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  age: Int
+  posts: [Post]!
+  comments: [Comment]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  post: Post!
+}
+
+input createUserInput {
+  name: String!
+  email: String!
+  password: String!
+  age: Int
+}
+
+input createPostInput {
+  title: String!
+  body: String!
+  published: Boolean!
+  author: ID!
+}
+
+input createCommentInput {
+  text: String!
+  author: ID!
+  post: ID!
+}
+input updateUserInput {
+  name: String
+  email: String
+  age: Int
+}
+
+input updatePostInput {
+  title: String
+  body: String
+  published: Boolean
+}
+
+input updateCommentInput {
+  text: String
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  node: Post
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
