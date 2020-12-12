@@ -1,0 +1,2 @@
+prisma-endpoint: 'http://prisma:4466'
+port: 4000 

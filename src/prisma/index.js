@@ -1,8 +1,9 @@
 const { Prisma } = require('prisma-binding');
+const config = require('config');
 
 const prisma = new Prisma({
   typeDefs: 'prisma/generated.graphql',
-  endpoint: 'http://prisma:4466', // :TODO should read from config
+  endpoint: config.get('prisma-endpoint'),
   // secret:'thisismysupersecrettext'
 });
 

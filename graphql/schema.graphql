@@ -1,3 +1,5 @@
+# import Subscription, Post, AuthPayload, User, Comment, PostSubscriptionPayload, CommentSubscriptionPayload  from './types.graphql'
+
 type Query {
   "just an example for run app"
   users(query: String): [User]!
@@ -7,7 +9,7 @@ type Query {
 
 type Mutation {
   "example for mutation create data"
-  createUser(data: createUserInput): User!
+  createUser(data: createUserInput): AuthPayload!
   "example for mutation create data"
   createPost(data: createPostInput): Post!
   "example for mutation create data"
@@ -26,35 +28,9 @@ type Mutation {
   updatePost(id: ID!, data: updatePostInput): Post!
   "example for mutation update data"
   updateComment(id: ID!, data: updateCommentInput): Comment!
-}
 
-type Subscription {
-  comment(postId: ID!): CommentSubscriptionPayload!
-  post: PostSubscriptionPayload!
-}
-type Post {
-  id: ID!
-  title: String!
-  body: String!
-  published: Boolean!
-  author: User!
-  comments: [Comment]!
-}
-
-type User {
-  id: ID!
-  name: String!
-  email: String!
-  age: Int
-  posts: [Post]!
-  comments: [Comment]!
-}
-
-type Comment {
-  id: ID!
-  text: String!
-  author: User!
-  post: Post!
+  "this is login endpoint"
+  login(data: loginInput!): AuthPayload!
 }
 
 input createUserInput {
@@ -68,7 +44,6 @@ input createPostInput {
   title: String!
   body: String!
   published: Boolean!
-  author: ID!
 }
 
 input createCommentInput {
@@ -92,18 +67,9 @@ input updateCommentInput {
   text: String
 }
 
-type PostSubscriptionPayload {
-  mutation: MutationType!
-  node: Post
+input loginInput {
+  email: String!
+  password: String!
 }
 
-type CommentSubscriptionPayload {
-  mutation: MutationType!
-  node: Comment
-}
 
-enum MutationType {
-  CREATED
-  UPDATED
-  DELETED
-}

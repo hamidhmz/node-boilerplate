@@ -1,0 +1,55 @@
+
+type Subscription {
+  comment(postId: ID!): CommentSubscriptionPayload!
+  post: PostSubscriptionPayload!
+}
+type Post {
+  id: ID!
+  title: String!
+  body: String!
+  published: Boolean!
+  author: User!
+  comments: [Comment]!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+
+
+type User {
+  id: ID!
+  name: String!
+  email: String
+  age: Int
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post]!
+  comments: [Comment]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  post: Post!
+}
+
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  node: Post
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}

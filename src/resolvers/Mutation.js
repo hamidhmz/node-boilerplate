@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   /* -------------------------------------------------------------------------- */
   /*                               create examples                              */
   /* -------------------------------------------------------------------------- */
-  async createUser(parent, args, { prisma }, info) {
+  async createUser(parent, args, { prisma }) {
     if (args.data.password.length < 8) {
       throw new Error('Password must be 8 characters or longer');
     }
@@ -16,19 +17,23 @@ module.exports = {
 
     const password = await bcrypt.hash(args.data.password, 10);
 
-    return prisma.mutation.createUser(
-      {
-        data: {
-          ...args.data,
-          password,
-        },
+    const user = prisma.mutation.createUser({
+      data: {
+        ...args.data,
+        password,
       },
-      info,
-    );
+    });
+
+    return {
+      user,
+      token: jwt.sign({ userId: user.id }, 'thisissecret'),
+    };
   },
 
-  async createPost(parent, args, { prisma }, info) {
-    const user = await prisma.exists.User({ id: args.data.author });
+  async createPost(parent, args, { prisma, utils, request }, info) {
+    const userId = await utils.getUserIdFromTokenInsideHeader(request);
+
+    const user = await prisma.exists.User({ id: userId });
 
     if (!user) {
       throw new Error('Author does not exists');
@@ -42,7 +47,7 @@ module.exports = {
           published: args.data.published,
           author: {
             connect: {
-              id: args.data.author,
+              id: userId,
             },
           },
         },
@@ -102,8 +107,13 @@ module.exports = {
       info,
     );
   },
-  async deletePost(parent, args, { prisma }, info) {
-    const post = await prisma.exists.Post({ id: args.id });
+  async deletePost(parent, args, { prisma, utils, request }, info) {
+    const userId = await utils.getUserIdFromTokenInsideHeader(request);
+
+    const post = await prisma.exists.Post({
+      id: args.id,
+      author: { id: userId },
+    });
 
     if (!post) {
       throw Error('post does not exits');
@@ -185,5 +195,28 @@ module.exports = {
       },
       info,
     );
+  },
+
+  async login(parent, args, { prisma }, info) {
+    const user = await prisma.query.user({
+      where: {
+        email: args.data.email,
+      },
+    });
+
+    if (!user) {
+      throw Error('Unable to login');
+    }
+
+    const isMatch = await bcrypt.compare(args.data.password, user.password);
+
+    if (!isMatch) {
+      throw Error('Unable to login');
+    }
+
+    return {
+      user,
+      token: await jwt.sign({ userId: user.id }, 'thisissecret'),
+    };
   },
 };

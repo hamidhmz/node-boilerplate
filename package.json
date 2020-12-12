@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "nodemon": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql && nodemon index",
+    "nodemon": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql && ls && cd prisma && prisma deploy --force && cd ../ && nodemon index",
+    "test:integration": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql && cd prisma && prisma deploy --force && cd ../ && ls && jest test/integration  --watch --forceExit --detectOpenHandles --verbose --coverage --maxWorkers=1 ",
     "get-schema": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql"
   },
   "repository": {
@@ -27,6 +28,7 @@
     "jest": "^26.6.3",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.6",
+    "prisma": "^1.34.10",
     "prisma-binding": "2.3.16"
   },
   "devDependencies": {

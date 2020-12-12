@@ -1,53 +1,54 @@
 version: "3.2"
 
 services:
-  app-prisma-graphql:
-    container_name: app-prisma-graphql
-    restart: always
+  app-prisma-graphql-test:
+    container_name: app-prisma-graphql-test
     build:
       context: .
-      dockerfile: ./docker/node/Dockerfile
+      dockerfile: ./docker/node/Dockerfile.test
     volumes:
       - .:/app
+    restart: always
 
     env_file:
       - .env
     ports:
-      - 4000:4000
+      - 5000:5000
     depends_on:
-      - postgres-prisma-graphql
-  postgres-prisma-graphql:
-    container_name: postgres-prisma-graphql
+      - postgres-prisma-graphql-test
+  postgres-prisma-graphql-test:
+    container_name: postgres-prisma-graphql-test
     image: postgres:13.1
-    restart: always
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=postgres-test
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - 5432:5432
+      - 5431:5432
+    restart: always
     volumes:
-      - postgres-data-prisma-graphql:/var/lib/postgresql/data
-  pgadmin-prisma-graphql:
-    container_name: pgadmin-prisma-graphql
+      - postgres-data-prisma-graphql-test:/var/lib/postgresql/data
+  pgadmin-prisma-graphql-test:
+    container_name: pgadmin-prisma-graphql-test
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: "h.mosaferkocholo@gmail.com"
       PGADMIN_DEFAULT_PASSWORD: "123456"
     restart: always
     volumes:
-      - pgadmin-prisma-graphql:/root/.pgadmin
+      - pgadmin-prisma-graphql-test:/root/.pgadmin
     depends_on:
-      - postgres-prisma-graphql
+      - postgres-prisma-graphql-test
     ports:
-      - "5050:80"
-  prisma:
+      - "5051:80"
+  prisma-test:
+    container_name: prisma-test
     image: prismagraphql/prisma:1.34
     restart: always
     ports:
-    - "4466:4466"
+    - "4461:4466"
     depends_on:
-      - postgres-prisma-graphql
+      - postgres-prisma-graphql-test
     environment:
       PRISMA_CONFIG: |
         port: 4466
@@ -56,8 +57,8 @@ services:
         databases:
           default:
             connector: postgres
-            host: postgres-prisma-graphql
-            database: prisma-graphql
+            host: postgres-prisma-graphql-test
+            database: prisma-graphql-test
             schema: public
             user: postgres
             password: postgres
@@ -66,6 +67,6 @@ services:
             port: '5432'
             migrations: true
 volumes:
-  postgres-data-prisma-graphql:
-  pgadmin-prisma-graphql:
+  postgres-data-prisma-graphql-test:
+  pgadmin-prisma-graphql-test:
 

@@ -1,6 +1,8 @@
 const Subscription = {
   comment: {
-    subscribe(parent, { postId }, { prisma }, info) {
+    async subscribe(parent, { postId }, { prisma, utils, request }, info) {
+      await utils.getUserIdFromTokenInsideHeader(request);
+
       return prisma.subscription.comment(
         {
           where: {
