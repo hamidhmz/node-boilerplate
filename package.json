@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "nodemon": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql && ls && cd prisma && prisma deploy --force && cd ../ && nodemon index",
-    "test:integration": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql && cd prisma && prisma deploy --force && cd ../ && ls && jest test/integration  --watch --forceExit --detectOpenHandles --verbose --coverage --maxWorkers=1 ",
-    "get-schema": "get-graphql-schema http://prisma:4466 > prisma/generated.graphql"
+    "nodemon": "cd prisma/default && prisma deploy --force && get-graphql-schema http://prisma:4466 > generated.graphql && cd ../../ && nodemon index",
+    "test:integration": " cd prisma/test && prisma deploy --force  && get-graphql-schema http://prisma-test:4466 > generated.graphql && cd ../../ && jest test/integration --all  --watch --forceExit --detectOpenHandles --verbose --coverage --maxWorkers=1 ",
+    "get-schema": "get-graphql-schema http://prisma:4466 > prisma/default/generated.graphql"
+  },
+  "jest": {
+    "globalSetup": "./test/jest/globalSetup.js",
+    "globalTeardown": "./test/jest/globalTeardown.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +24,7 @@
   },
   "homepage": "https://github.com/hamidhmz/prisma-graphql#readme",
   "dependencies": {
+    "apollo-boost": "^0.4.9",
     "apollo-server": "^2.19.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.3",
@@ -34,6 +39,7 @@
   "devDependencies": {
     "eslint": "^7.14.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "eslint-plugin-import": "^2.22.1",
+    "faker": "^5.1.0"
   }
 }

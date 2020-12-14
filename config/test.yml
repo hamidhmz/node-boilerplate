@@ -1,2 +1,3 @@
 prisma-endpoint: 'http://prisma-test:4466'
-port: 5000 
+port: 5005
+prisma-typeDefs: 'prisma/test/generated.graphql'
